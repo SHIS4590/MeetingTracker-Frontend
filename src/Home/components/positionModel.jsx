@@ -43,6 +43,7 @@ const PositionModel = (props) => {
       </p>
     </Modal>
   )
+  
 }
 
 export default PositionModel
