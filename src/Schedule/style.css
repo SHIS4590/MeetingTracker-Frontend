@@ -1,0 +1,15 @@
+.form {
+    padding: 20px 40px;
+}
+
+.form p {
+    width: 80%;
+}
+
+.table {
+    padding: 20px 40px 40px 0;
+}
+
+.table>p {
+    text-align: right;
+}
