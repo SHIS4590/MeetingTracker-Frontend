@@ -53,7 +53,15 @@ class Cards extends React.Component {
 					>
 						Create
 					</Button>
-					<Button type="link">View</Button>
+					<Button
+						type="link"
+						onClick={() => {
+							const { index } = this.props
+							this.props.onView(index, record.index)
+						}}
+					>
+						View
+					</Button>
 					<Button
 						type="link"
 						onClick={() => {
@@ -112,19 +120,26 @@ class Cards extends React.Component {
 
 	onDeleteAction = (data) => {
 		const { index } = this.props
-    const { list } = this.state
+		const { list } = this.state
     const newList = list.slice(0)
-    newList.splice(data.index, 1)
-    this.props.onRemove(index, data.index)
-    this.setState({ list: newList })
-    message.success('Delete Success!')
+    let sort
+    newList.forEach((item, index) => {
+      if(item.index === data.index){
+        sort = index
+        window.sessionStorage.removeItem(`${index}-${item.index}`)
+      }
+    })
+		newList.splice(sort, 1)
+		this.props.onRemove(index, sort)
+		this.setState({ list: newList })
+		message.success('Delete Success!')
 	}
 
 	onDeleteSchedule = (data) => {
 		const { index } = this.props
 		window.sessionStorage.removeItem(`${index}-${data.index}`)
-    message.success('Delete Success!')
-    window.location.reload()
+		message.success('Delete Success!')
+		window.location.reload()
 	}
 
 	onOpen = () => {
@@ -168,7 +183,20 @@ class Cards extends React.Component {
 						<Button type="link" onClick={this.onOpen}>
 							Add new Candidate
 						</Button>
-						<Button type="link">View All Meeting Schedules</Button>
+						<Button
+							type="link"
+							onClick={() => {
+								const { index } = this.props
+								const { list } = this.state
+								const arr = []
+								list.forEach((item) => {
+									arr.push(item.index)
+								})
+								this.props.onView(index, 0, arr)
+							}}
+						>
+							View All Meeting Schedules
+						</Button>
 					</span>
 				}
 			>

@@ -2,17 +2,20 @@ import React from 'react'
 import { Button } from 'antd'
 import Cards from './components/card'
 import PositionModel from './components/positionModel'
+import ViewModel from './components/viewModel'
 import './style.css'
 
 export default class Home extends React.Component {
 	state = {
 		modelStatus: {
 			position: false,
+			view: false,
 		},
 		dataStore: {
 			position: [],
 			users: [],
 		},
+		view: [],
 	}
 
 	onOpen = () => {
@@ -41,7 +44,9 @@ export default class Home extends React.Component {
 				const { users } = dataStore
 				const len = users.length ? users[index].length : 0
 				data.index = len
-				const newUsers = users[index] ? users[index].concat([data]) : [].concat([data])
+				const newUsers = users[index]
+					? users[index].concat([data])
+					: [].concat([data])
 				users.splice(index, 1, newUsers)
 				this.setState({
 					dataStore: {
@@ -52,9 +57,9 @@ export default class Home extends React.Component {
 				window.sessionStorage.setItem('users', JSON.stringify(users))
 			default:
 				break
-    }
+		}
 
-    window.location.reload()
+		window.location.reload()
 	}
 
 	onCancel = (type) => {
@@ -64,23 +69,51 @@ export default class Home extends React.Component {
 				this.setState({ modelStatus: { ...modelStatus, position: false } })
 				break
 			default:
+				this.setState({ modelStatus: { ...modelStatus, view: false } })
 				break
 		}
+	}
+
+	onView = (index, sort, arr) => {
+		const { modelStatus } = this.state
+		if (!arr) {
+			const sessionData = JSON.parse(
+				window.sessionStorage.getItem(`${index}-${sort}`)
+			)
+			this.setState({
+				view: sessionData,
+				modelStatus: { ...modelStatus, view: true },
+			})
+			return
+		}
+		let data = []
+		for (let i = 0; i < arr.length; i++) {
+			const sessionData = JSON.parse(
+				window.sessionStorage.getItem(`${index}-${arr[i]}`)
+      )
+      if(sessionData){
+        data = data.concat(sessionData)
+      }
+		}
+		this.setState({
+			view: data,
+			modelStatus: { ...modelStatus, view: true },
+		})
 	}
 
 	onRemove = (index, sort) => {
 		const { dataStore } = this.state
 		const newList = dataStore.users.slice(0)
-    const arr = newList[index]
-    arr.splice(sort, 1)
-    newList[index] = arr
+		const arr = newList[index]
+		arr.splice(sort, 1)
+		newList[index] = arr
 		window.sessionStorage.setItem('users', JSON.stringify(newList))
 		this.setState({
 			dataStore: {
 				...dataStore,
 				users: newList,
 			},
-    })
+		})
 	}
 
 	componentDidMount() {
@@ -102,6 +135,7 @@ export default class Home extends React.Component {
 		const {
 			modelStatus,
 			dataStore: { position, users },
+			view,
 		} = this.state
 		return (
 			<div className="home">
@@ -118,6 +152,7 @@ export default class Home extends React.Component {
 								list={users[index]}
 								onOK={this.onOK}
 								onRemove={this.onRemove}
+								onView={this.onView}
 							/>
 					  ))
 					: null}
@@ -125,6 +160,13 @@ export default class Home extends React.Component {
 					<PositionModel
 						visible={modelStatus.position}
 						onOK={this.onOK}
+						onCancel={this.onCancel}
+					/>
+				)}
+				{modelStatus.view && (
+					<ViewModel
+						visible={modelStatus.view}
+						data={view}
 						onCancel={this.onCancel}
 					/>
 				)}
