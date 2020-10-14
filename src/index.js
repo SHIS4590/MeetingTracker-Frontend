@@ -9,7 +9,7 @@ ReactDOM.render(
   <Router>
     <div className="App">
       <Route exact path="/" component={Home} />
-      <Route exact path="/schedule/:name" component={Schedule} />
+      <Route path="/schedule" component={Schedule} />
     </div>
   </Router>,
   document.getElementById('root')

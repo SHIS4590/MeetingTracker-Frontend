@@ -2,12 +2,13 @@
     padding: 20px 40px;
 }
 
-.form p {
+/* .form p {
     width: 80%;
-}
+} */
 
 .table {
-    padding: 20px 40px 40px 0;
+  padding-top: 20px;
+    padding-right: 40px;
 }
 
 .table>p {
